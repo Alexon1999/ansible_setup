@@ -1,0 +1,7 @@
+scw_instances:
+  hosts:
+    demo_testing_ins:
+      ansible_host: 51.158.102.133
+  vars:
+    ansible_user: ansible
+    ansible_ssh_private_key_file: /home/alexon/.ssh/ansible-demo-user

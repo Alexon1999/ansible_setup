@@ -1,0 +1,54 @@
+---
+- name: Re-enable root SSH access
+  hosts: scw_instances
+  become: yes
+  tasks:
+    - name: Allow root SSH login
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^PermitRootLogin"
+        line: "PermitRootLogin yes"
+        state: present
+
+    - name: Remove DenyUsers root entry
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^DenyUsers root"
+        state: absent
+
+    - name: Restart SSH service to apply changes
+      service:
+        name: sshd
+        state: restarted
+        enabled: yes
+
+- name: Remove ansible user
+  hosts: scw_instances
+  become: yes
+  tasks:
+    - name: Remove ansible user and home directory
+      user:
+        name: ansible
+        state: absent
+        remove: yes
+
+    - name: Remove ansible sudoers file
+      file:
+        path: /etc/sudoers.d/ansible
+        state: absent
+
+- name: Re-enable password authentication
+  hosts: scw_instances
+  become: yes
+  tasks:
+    - name: Enable password authentication in SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^#?PasswordAuthentication"
+        line: "PasswordAuthentication yes"
+
+    - name: Restart SSH service to apply changes
+      service:
+        name: sshd
+        state: restarted
+        enabled: yes

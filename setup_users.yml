@@ -1,0 +1,33 @@
+---
+- name: Manage Servers
+  hosts: scw_instances
+  become: yes
+  tasks:
+    - name: Ping test
+      ping:
+
+    - name: Create a user
+      user:
+        name: john
+        password: "{{ 'john' | password_hash('sha512') }}"
+        shell: /bin/bash
+        state: present
+
+    - name: Allow user to run sudo without password
+      lineinfile:
+        path: /etc/sudoers.d/john
+        create: yes
+        line: "john ALL=(ALL) NOPASSWD:ALL"
+        validate: "visudo -cf %s"
+
+    # - name: Ensure john user cannot connect via SSH
+    #   lineinfile:
+    #     path: /etc/ssh/sshd_config
+    #     insertafter: EOF
+    #     line: "DenyUsers john
+
+    - name: Restart SSH service
+      service:
+        name: sshd
+        state: restarted
+        enabled: yes
