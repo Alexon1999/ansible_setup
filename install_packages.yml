@@ -1,0 +1,121 @@
+---
+- name: Update and install packages
+  hosts: scw_instances
+  become: yes
+  vars:
+    authorized_users:
+      - root
+      - john
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+        autoremove: yes
+
+    - name: Install apt packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - curl
+
+    - name: Ensure curl is installed
+      command: curl --version
+      register: curl_installed
+      ignore_errors: yes
+
+    - name: Debug output for curl installation
+      debug:
+        msg: "Curl installation output: {{ curl_installed }}"
+
+    - name: Create /etc/apt/keyrings directory
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Add Docker's official GPG key
+      shell: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+      args:
+        creates: /etc/apt/keyrings/docker.gpg
+
+    - name: Set permissions for Docker's GPG key
+      file:
+        path: /etc/apt/keyrings/docker.gpg
+        mode: "0644"
+
+    - name: Add Docker repository to sources list
+      shell: |
+        echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+      args:
+        creates: /etc/apt/sources.list.d/docker.list
+
+    - name: Update apt cache after adding Docker repo
+      apt:
+        update_cache: yes
+
+    - name: Install Docker packages
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Verify Docker installation
+      command: docker --version
+      register: docker_version
+      ignore_errors: yes
+
+    - name: Debug Docker installation version
+      debug:
+        msg: "Docker version installed: {{ docker_version.stdout }}"
+
+    - name: Create a dedicated Docker user
+      user:
+        name: docker-rl
+        shell: /bin/bash
+        create_home: yes
+        home: /home/docker-rl
+
+    # Add the docker-rl user to the sudo group to allow it to run commands with sudo privileges.
+    # run this command to switch to docker-rl user sudo -u docker-rl -i
+    - name: Allow authorized users to switch to docker-rl without password
+      lineinfile:
+        path: /etc/sudoers.d/docker-rl
+        create: yes
+        line: "{{ item }} ALL=(docker-rl) NOPASSWD: ALL"
+        validate: "visudo -cf %s"
+      loop: "{{ authorized_users }}"
+
+    - name: Add docker-rl to docker group
+      user:
+        name: docker-rl
+        groups: docker
+        append: yes
+
+    - name: Change group ownership of /usr/bin/docker
+      file:
+        path: /usr/bin/docker
+        owner: root
+        group: docker
+
+    - name: Set permissions on /usr/bin/docker
+      file:
+        path: /usr/bin/docker
+        mode: "0750"

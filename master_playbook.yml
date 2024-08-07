@@ -1,0 +1,6 @@
+---
+- name: Set up users
+  import_playbook: setup_users.yml
+
+- name: Install packages and Docker
+  import_playbook: install_packages.yml

@@ -1,7 +1,12 @@
 ---
 - name: Manage Servers
   hosts: scw_instances
-  become: yes
+  become: yes # This task requires sudo privileges to run on the remote machine.
+  vars_files:
+    - vault.yml
+  vars:
+    ssh_key_dir: /home/alexon/.ssh
+    ansible_become_password: "{{ vault_control_node_user_password }}"
   tasks:
     - name: Ping test
       ping:
@@ -13,18 +18,41 @@
         shell: /bin/bash
         state: present
 
-    - name: Allow user to run sudo without password
-      lineinfile:
-        path: /etc/sudoers.d/john
-        create: yes
-        line: "john ALL=(ALL) NOPASSWD:ALL"
-        validate: "visudo -cf %s"
+    - name: Ensure john's .ssh directory exists
+      file:
+        path: /home/john/.ssh
+        state: directory
+        owner: john
+        group: john
+        mode: "0700"
 
-    # - name: Ensure john user cannot connect via SSH
-    #   lineinfile:
-    #     path: /etc/ssh/sshd_config
-    #     insertafter: EOF
-    #     line: "DenyUsers john
+    # This task generates an SSH key pair on the control machine (using the localhost delegation). It creates the key pair only if it doesn't already exist (creates argument prevents overwriting).
+    - name: Generate SSH key pair
+      delegate_to: localhost
+      become: yes
+      run_once: true
+      command: "ssh-keygen -f {{ ssh_key_dir }}/john_key -N '' -C 'john@server'"
+      args:
+        creates: "{{ ssh_key_dir }}/john_key"
+
+    - name: Read public key
+      delegate_to: localhost
+      run_once: true
+      shell: "cat {{ ssh_key_dir }}/john_key.pub"
+      register: john_public_key
+
+    - name: Copy public key to john's authorized_keys
+      authorized_key:
+        user: john
+        state: present
+        key: "{{ john_public_key.stdout }}"
+
+    - name: Set permissions on authorized_keys
+      file:
+        path: /home/john/.ssh/authorized_keys
+        owner: john
+        group: john
+        mode: "0600"
 
     - name: Restart SSH service
       service:
