@@ -1,6 +1,10 @@
 # Ansible
 We can use Ansible for configuration management of slave servers. meaning install/deploy applications and configure provisioned infrastructure.
 
+## Documentations
+- [Official Documentation](https://docs.ansible.com/ansible/latest/getting_started/index.html)
+- [SpaceLift Ansible Tutorial](https://spacelift.io/blog/ansible-tutorial)
+
 ## Workflow
 
 - Make at least one machine a control node (control machine, master machine) which will connect to your slave servers (the servers you wish to manage).
@@ -8,11 +12,6 @@ We can use Ansible for configuration management of slave servers. meaning instal
 - set scaleway inventory vars ansible user : ansible
 - create a new playbook to create ansible user with sudo permissions by overriding Var ansible user to root then disable ssh login root and password authentication in general.
 - then other playbooks to manage servers, create users, install packages, etc.
-
-
-## Official Documentation
-https://docs.ansible.com/ansible/latest/getting_started/index.html
-https://spacelift.io/blog/ansible-tutorial
 
 ### Verify your inventory.
 ```
