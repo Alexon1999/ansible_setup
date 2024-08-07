@@ -1,12 +1,25 @@
+# Ansible
+We can use Ansible for configuration management of slave servers. meaning install/deploy applications and configure provisioned infrastructure.
+
+## Workflow
+
+- Make at least one machine a control node (control machine, master machine) which will connect to your slave servers (the servers you wish to manage).
+- Inventory file is created from terraform results.
+- set scaleway inventory vars ansible user : ansible
+- create a new playbook to create ansible user with sudo permissions by overriding Var ansible user to root then disable ssh login root and password authentication in general.
+- then other playbooks to manage servers, create users, install packages, etc.
+
+
+## Official Documentation
 https://docs.ansible.com/ansible/latest/getting_started/index.html
 https://spacelift.io/blog/ansible-tutorial
 
-# Verify your inventory.
+### Verify your inventory.
 ```
 $ ansible-inventory -i inventory.yml --list
 ```
 
-# Tips for building inventories
+### Tips for building inventories
 - Ensure that group names are meaningful and unique. Group names are also case sensitive.
 - Avoid spaces, hyphens, and preceding numbers (use floor_19, not 19th_floor) in group names.
 - Group hosts in your inventory logically according to their What, Where, and When.
@@ -20,7 +33,7 @@ Group hosts by geographic location, for example: datacenter, region, floor, buil
 **When**
 Group hosts by stage, for example: development, test, staging, production.
 
-# Ansible Vault
+### Ansible Vault
 Ansible Vault allows you to encrypt sensitive data, such as passwords, within your playbooks and variable files. Here's how you can use Ansible Vault to pass a password:
 
 create/edit vault file
@@ -32,30 +45,30 @@ $ ansible-vault edit vault.yml
 vault_control_node_user_password: "your_control_node_user_password"
 ```
 
-# Initialize ansible environment
+### Initialize ansible environment
 - Initialize ansible environment
 ```bash
 $ ansible-playbook -i inventory.yml initialize.yml
 ```
 
-# Ping the `scw_instances` in your inventory
+### Ping the `scw_instances` in your inventory
 ```bash
 $ ansible -i inventory.yml scw_instances -m ping
 ```
 
-# Run your playbook
+### Run your playbook
 - Run a playbook
 ```bash
 $ ansible-playbook -i inventory.yml setup_users.yml
 ```
 
-# Run your playbook with vault
+### Run your playbook with vault
 ```bash
 # it will ask for the vault password
 $ ansible-playbook -i inventory.yml setup_users.yml --ask-vault-pass
 ```
 
-# Master playbook
+### Master playbook
 You can individually run playbooks or create a master playbook that includes all the playbooks you want to run at once.
 
 - Create a master playbook that includes all the playbooks you want to run at once.
