@@ -5,6 +5,32 @@ We can use Ansible for configuration management of slave servers. meaning instal
 - [Official Documentation](https://docs.ansible.com/ansible/latest/getting_started/index.html)
 - [SpaceLift Ansible Tutorial](https://spacelift.io/blog/ansible-tutorial)
 
+## Ansible Concepts
+
+- **Control node**
+
+Any machine with Ansible installed. You can run commands and playbooks, invoking `/usr/bin/ansible` or `/usr/bin/ansible-playbook`, from any control node. You can use any computer that has Python installed on it as a control node - laptops, shared desktops, and servers can all run Ansible. However, you cannot use a Windows machine as a control node. You can have multiple control nodes.
+
+- **Managed nodes**
+
+The network devices (and/or servers) you manage with Ansible. Managed nodes are also sometimes called “hosts”. Ansible is not installed on managed nodes.
+
+- **Inventory**
+
+A list of managed nodes. An inventory file is also sometimes called a “hostfile”. Your inventory can specify information like IP address for each managed node. An inventory can also organize managed nodes, creating and nesting groups for easier scaling. To learn more about inventory, see [the Working with Inventory](https://docs.ansible.com/ansible/2.9/user_guide/intro_inventory.html#intro-inventory) section. In summary a File listing hosts and host groups to be managed.
+
+- **Playbooks**
+
+YAML files containing a series of tasks to be performed on hosts.
+
+- **Inventory**
+
+File listing hosts and host groups to be managed.
+
+- **Modules**
+
+Modules (also referred to as “task plugins” or “library plugins”) are discrete units of code that can be used from the command line or in a playbook task. Ansible executes each module, usually on the remote target node, and collects return values.
+
 ## Workflow
 
 - Make at least one machine a control node (control machine, master machine) which will connect to your slave servers (the servers you wish to manage).
@@ -12,6 +38,8 @@ We can use Ansible for configuration management of slave servers. meaning instal
 - set scaleway inventory vars ansible user : ansible
 - create a new playbook to create ansible user with sudo permissions by overriding Var ansible user to root then disable ssh login root and password authentication in general.
 - then other playbooks to manage servers, create users, install packages, etc.
+
+## Setup Ansible configuration
 
 ### Verify your inventory.
 ```
