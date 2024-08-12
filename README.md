@@ -130,8 +130,15 @@ $ ansible-playbook -i inventory.yml master_playbook.yml --ask-vault-pass
 
 ## Alternatives IT Automation Tools
 
-- Puppet
+- Puppet :
+
+Puppet Server is installed on Control Node and Puppet Agent is installed in each Managed Nodes and Configure Puppet Agent to connect to Puppet Master (manually, using Ansible, Cloudinit)
+
 - Chef
+
+The Chef Server is the central hub in the Chef architecture. It stores all the configuration data (recipes, cookbooks, environments, roles, etc.) and serves as a repository for this information.
+
+The Chef Client is installed on each managed node. The client periodically contacts the Chef Server to pull down configuration data (run-lists) and apply it to the node.
 
 [Chef vs Puppet vs Ansible vs Saltstack | Configuration Management Tools](https://www.youtube.com/watch?v=_TVNCTK808I)
 
