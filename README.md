@@ -1,5 +1,7 @@
 # Ansible
-We can use Ansible for configuration management of slave servers. meaning install/deploy applications and configure provisioned infrastructure.
+Ansible is a Configuration Management Tool.
+
+We can use Ansible for configuration management of slave servers. meaning **install/deploy applications and configure provisioned infrastructure.**
 
 ## Documentations
 - [Official Documentation](https://docs.ansible.com/ansible/latest/getting_started/index.html)
