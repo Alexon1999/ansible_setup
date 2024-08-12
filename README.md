@@ -132,7 +132,9 @@ $ ansible-playbook -i inventory.yml master_playbook.yml --ask-vault-pass
 
 - Puppet :
 
-Puppet Server is installed on Control Node and Puppet Agent is installed in each Managed Nodes and Configure Puppet Agent to connect to Puppet Master (manually, using Ansible, Cloudinit)
+Puppet Server is installed on Control Node. this control node holds the desired state configurations (also called "manifests") for all the managed nodes.
+
+and Puppet Agent is installed in each Managed Nodes and Configure Puppet Agent to connect to Puppet Master (manually, using Ansible, Cloudinit)
 
 - Chef
 
