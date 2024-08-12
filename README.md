@@ -21,7 +21,7 @@ A list of managed nodes. An inventory file is also sometimes called a “hostfil
 
 - **Playbooks**
 
-YAML files containing a series of tasks to be performed on hosts.
+YAML files containing a series of tasks to be performed on hosts. Ansible is **Procedural** meaning we write the instructions on how to do tasks.
 
 - **Inventory**
 
@@ -30,6 +30,10 @@ File listing hosts and host groups to be managed.
 - **Modules**
 
 Modules (also referred to as “task plugins” or “library plugins”) are discrete units of code that can be used from the command line or in a playbook task. Ansible executes each module, usually on the remote target node, and collects return values.
+
+<div style="width:500px; margin: auto;">
+  <img src="./imgs/ansible_concepts_diagram.png" />
+</div>
 
 ## Workflow
 
@@ -104,7 +108,7 @@ $ ansible-playbook -i inventory.yml initialize.yml
 $ ansible-playbook -i inventory.yml master_playbook.yml --ask-vault-pass
 ```
 
-# [Troubleshoting]
+## [Troubleshoting]
 - Test the connection to the host
   ```bash
   $ ssh -i /home/alexon/.ssh/ansible-demo-user ansible@51.158.102.133 -v
@@ -122,3 +126,14 @@ $ ansible-playbook -i inventory.yml master_playbook.yml --ask-vault-pass
   ```bash
   $ ssh-keygen -f "/home/alexon/.ssh/known_hosts" -R "51.158.102.133"
   ```
+
+
+## Alternatives IT Automation Tools
+
+- Puppet
+- Chef
+
+[Chef vs Puppet vs Ansible vs Saltstack | Configuration Management Tools](https://www.youtube.com/watch?v=_TVNCTK808I)
+
+
+---
